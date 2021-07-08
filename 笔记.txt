@@ -1,0 +1,1071 @@
+根据中心极限定理。多元线性回归中，不是error服从正太分布，而是所有的error叠加之后服从正太分布。
+	均值我们总有办法让他去等于0. n个m个error相加，服从正态分布。
+	
+评估指标
+	k重交叉验证 
+		cross_val_score中scoring如果传入的是accuracy。这个方法也可以传入recall  precision
+		cross_val_predict 的method 如果等于decision_function得到一个z值，直接拿这个z值与threshold比较。
+		accuracy代表模型的准确率，比如90%
+		precision与recall对应
+	混淆矩阵，传入的是预测值与实际值
+	precision_score 得到的是一个数，传入的是实际值(true or false)和预测值(true or false)
+	recall_score 一个数,同上
+	f1_score一个数，同上
+	accuracy_score(y_test,y_pred_rf)
+	
+	decision_function得出来的分数是各自行相对应的分数。
+		比如逻辑回归，这个分数就是z=theta*X z默认和0比较。
+	
+	roc曲线
+	auc面积
+	把真实值和decision_function计算出来的分数交给precision_recall_curve函数就可以precision recall threshold
+		三者之间的关系，也就可以画出来那张图，这个函数传入的是实际值(true or false) 分数(每行通过decision_function算出来的分数。)
+		
+决策树是一种非线性有监督分类模型 既能做分类，也能做回归
+	比如叶子节点有3个子节点。3.6,3.7,3.8取平均，3.7，如果一路走到这个节点下，未来就给她预测为3.7
+随机森林是一种非线性有监督分类模型
+CART:classification and regression tree gini系数，仅产生二分类
+ID3：信息增益
+C4.5:信息增益率
+gini系数和Entropy是做分类的，Variance(方差)是做回归的
+乘以p是为了放大信息的变化
+
+p(x,y)=p(x)p(y)独立
+p(x,y)=p(x|y)p(y)=p(y|x)p(x)不独立，这不是条件概率吗
+条件熵:H(Y|X)=H(X,Y)-H(X)
+交叉熵(相对熵):H(p,q)=∑p(i)log(1/q(i))，可以度量2个随机变量的距离，真实值与预测值之间的距离
+互信息I(X,Y)=∑p(x,y)log(p(x,y)/p(x)p(y)),就是信息增益
+	I(X,Y) = H(X)+H(Y)-H(X,Y)
+H(X,Y)=H(X)+H(Y)-I(X,Y)有交集的前提下
+
+bagging，所有超参数都一样，训练多棵树.
+	然后基于每个采样集训练出一个学习器，再将学习器进行结合。
+	对分类任务使用投票法，对回归任务采用平均值法
+对样本和特征都进行采样叫random patchs 如随机森林
+	http://blog.csdn.net/u014665416/article/details/51557318
+只对特征采样，保留所有的样本叫random subspaces
+
+boosting
+	通过提高那些在前一轮被弱分类器分错样例的权值，减小前一轮分对样例的权值，
+		来使得分类器对误分的数据有较好的效果。
+	通过加法模型将弱分类器进行线性组合，比如AdaBoost通过加权多数表决的方式，
+		即增大错误率小的分类器的权值，同时减小错误率较大的分类器的权值。
+AdaBoost只适用于二分类任务，
+GBDT中的树都是回归树，不是分类树。GBDT用来做回归预测，调整后也可以用于分类
+组成随机森林的树可以是分类树，也可以是回归树；而GBDT只能由回归树组成。
+	http://blog.csdn.net/w28971023/article/details/8240756
+	
+CART是一棵二叉树。
+CART既能是分类树，又能是回归树
+当CART是分类树时，采用GINI值作为节点分裂的依据；
+	当CART是回归树时，采用样本的最小方差作为节点分裂的依据；
+	
+bootstrapping是一种有放回的抽样思想，主要有Bagging和Pasting(无放回的抽样)
+BaggingTree和RandomTree就像LogisticRegression和SGDRegression
+RandomTree在样本随机的前提下再随机特征，BaggingTree仅仅随机样本。
+rf随机样本，抽样数据后对feature也进行抽样，随机讲feature进行组合作为新的特征
+Gradient Boost是一个框架，里面可以套入很多不同的算法
+
+特征的离散化，升维，one-hot编码
+特征值的离散化
+
+kmeans：kmeans也有一个模型，即为k个中心点所在的位置，当有一条新的数据时，直接计算与
+	中心点的距离，划分类别即可
+	有2种情况
+		1:当样本中都不存在y时，用kmeans聚类比用kmeans聚类后生成的y代到LR中，训练模型再预测效果要好
+			因为kmeans存在误差，而用LR预测或分类还有误差，就有了双重误差。
+		2:如果样本中大部分标签是有的，还有一部分是空值，想补全，可以用聚类
+	降维:
+		m*n(m个样本，n个特征)->m个样本，6个特征，6即为6个类别。
+		比如第一行聚类之后属于0这个类别，根据one-hot编码，变成[1 0 0 0 0 0] m*6
+归一化:均值归一化，std(方差)归一化，最大值，最小值归一化
+相似度
+	闵可夫斯基距离公式中，p=2为欧式距离，p=1为曼哈顿距离，blockDistance,p趋向于无穷大是切比雪夫距离
+	jaccard相似系数，用于比较有限样本集之间的相似性和差异性，jaccard系数越大，相似性越高
+		jaccard距离=1-jaccard系数
+	余弦距离测度，度量文档的相似性
+	皮尔逊相关系数，计算2组变量间线性相关性。[-1,1]
+	相对熵
+	交叉熵
+	F1实际上也是jaccard系数的含义。
+	余弦距离和皮尔逊相关性是相通的，余弦距离相当于皮尔逊的特例，皮尔逊系数均值归一化。
+	高斯距离
+
+k-mediods:中位数，可以抑制噪声。中心点一定是某个样本点。
+二分kmeans
+k-means++:首先随机选择一个中心点，算出每个点到该中心点的距离，转换成概率di/sum(d),变成一个概率区间
+	随机一把，看落在哪个区间，则为第二个中心点。第三个点的选取，算出点到第一个点和第二点的距离求和，
+	也转换成概率。好处就是选择离中心点稍微远些。
+mini batch kmeans
+
+canopy聚类，T2里面的点不会是其他簇的中心点，T1里面(包含T2)的点都属于该簇，只是T2里面的点
+	不会是其他簇的中心点，直到所有的点都属于T1里面结束，一般用于kmeans选取中心点
+	
+均一性(h):一个簇中只包含一个类别样本，Precision
+完整性(c)，同类别样本被归到同一个簇中，Recall
+V-Measure,F-measure
+
+皮尔逊相关系数
+PCA
+聚类
+拉普拉斯矩阵降维
+
+升维有很多方式，通过某些方式的用(<X1,X2>+1)^^2可以求出升维后的内积
+纯朴素贝叶斯理论时，应该看每个特征的分布情况，比如第一个特征是离散的，用多项式贝叶斯来算，第二个
+	是连续的用高斯贝叶斯来算，但在实际使用时，一般都会把整体看成一个分布，而不会去单独看某个属性的
+	分布。如果大部分是离散的，将连续数据离散化，或者反过来。
+	
+也即是某次的g(x)在为最优解起作用，那么它的系数值(可以)不为0。
+	如果某次g(x)没有为下一次的最优解x的获得起到作用，那么它的系数就必须为0，这就是这个公式的含义
+以上两种情况就是说，要么可行解落在约束边界上即得 g(x)=0 ，(https://www.cnblogs.com/ooon/p/5721119.html)
+	要么可行解落在约束区域内部，此时约束不起作用，另 λ=0 消去约束即可，所以无论哪种情况都会得到λg(x)=0
+	
+上式需要满足的要求是拉格朗日乘子 λ>0 ，这个问题可以举一个形象的例子，
+	假设你去爬山，目标是山顶，但有一个障碍挡住了通向山顶的路，
+	所以只能沿着障碍爬到尽可能靠近山顶的位置，然后望着山顶叹叹气，
+	这里山顶便是目标函数的可行解，障碍便是约束函数的边界，
+	此时的梯度方向一定是指向山顶的，与障碍的梯度同向
+
+二元函数的最优规划问题，和寻找山间小路上的最高点的思路是一样。
+	到达山间小路最高点位置后，无论沿山间小路哪个方向走，都是下坡，
+	都会走向较低的等高线，因此，在小路的最高点位置，小路必须与山坡的等高线相切
+沿着小路到达最高点，如果小路的最高点不上山顶，而此时的小路是约束，此时小路的最高点即是
+	在约束条件下的最优解，也即与等高线相切。
+KKT条件是对最优解的约束，而原始问题中的约束条件是对可行解的约束
+
+逻辑回归中，一般样本都不可能是全部，根据公式的推导，求出来的w比真实值要大，加
+	正则可以使w不会那么大。其次，如果w很大的话，对某个x会分敏感。减小w可以降低
+	敏感度，即防止过拟合。
+	
+训练的时候，sigma比实际的偏小，导致重合的面积偏小。训练样本上的效果要好于测试集。
+	比实际的运用时要好
+采样的偏差普遍偏小，得出2个结论:
+	1，w整体偏大的，需要正则。
+	2，因为方差偏小，实际估出来的方差也是偏小的，拿到实际请求使用的话，效果往往没有在
+		训练的时候好
+
+首先，比如职业服从一个分布，从职业这个分布中选一个职业，如棒球，再把棒球这个职业的命中率的
+	分布找到，这样才能去评估这个棒球手是好是坏。即分布的分布。
+二项式分布的分布即贝塔分布，多项式分布的分布即狄利克雷分布。
+
+类别之间互斥，用softmax回归，不互斥，逻辑回归多个二分类
+
+在保证决策面方向不变且不会出现错分样本的情况下移动决策面,会在原来的决策面两侧找到两
+	个极限位置（越过该位置就会产生错分现象），如虚线所示。虚线的位置由决策面的方向和
+	距离原决策面最近的几个样本的位置决定,而这两条平行虚线正中间的分界线就是在保持
+	当前决策面方向不变的前提下的最优决策面.两条虚线之间的垂直距离就是这个最优决策面对应的分类间隔
+	显然每一个可能把数据集正确分开的方向都有一个最优决策面,而不同方向的最优决策面的分类间隔通常是不同的,
+	那个具有“最大间隔”的决策面就是SVM要寻找的最优解。间隔的大小实际上就是支持向
+	量对应的样本点到决策面的距离的二倍
+	
+TensorFlow中线性回归
+1、用解析解的方式一步直接算出所有theta，参考07_linear_regression.py
+2、梯度=(y_pred - y) * xj
+	gradients = 2/m * tf.matmul(tf.transpose(X),error)
+	training_op = tf.assign(theta,theta-learning_rate*gradients)，参考08_manually_gradients.py
+3、用TensorFlow自动求导的方式
+	gradients = tf.gradients(mse,[theta])[0]
+	training_op = tf.assign(theta,theta-learning_rate*gradients)，参考09_autodiff.py
+4、用TensorFlow中的GradientDescentOptimizer的优化器，来最小化mse。
+	optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
+	training_op = optimizer.minimize(mse)
+逻辑回归训练多个二分类:
+	假设有3条数据，第一条代表猫，第二条代表狗，第三条代表鱼，当训练多个二分类时，训练第一个
+	分类器时，3条数据的y=[1,0,0],训练第二个分类器时,y=[0,1,0],训练第三个二分类时,y=[0,0,1]
+	
+使用tf.Variable时，如果检测到命名冲突，系统会自己处理,
+	使用tf.get_variable()时，系统不会处理冲突，而会报错
+	http://blog.csdn.net/u012436149/article/details/53696970
+	http://blog.csdn.net/u012436149/article/details/53081454
+tf.variable_scope可以让变量有相同的命名，包括tf.get_variable得到的变量，还有tf.Variable的变量
+tf.name_scope可以让变量有相同的命名，只是限于tf.Variable的变量
+当tf.variable_scope使用参数reuse=True生成上下文管理器时，
+	这个上下文管理器内所有的tf.get_variable会直接获取已经创建的变量。
+	如果变量不存在，则会报错；但是若reuse=False或None时，
+	tf.get_variable会创建新的变量，如果同名参数存在则会报错
+
+g和x是正相关，g和w是负相关
+不管是均值还是方差归一化(除以方差)，w的变化要么同时变大，要么同时变小
+
+1、w0
+2、升维
+3、threshold
+4、方差归一化(梯度下降)
+5、均值归一化(梯度下降)
+6、正则
+
+crossfunction 保证的是准确率，正则保证的是泛化能力(w更小)，参数的大小表示的是你有多少看中泛化能力
+	numda越大，越看重泛化能力。
+LBFGS,每次迭代的计算比随机梯度多。比SGD快。
+sklearn中multi_class ='ovr'代表使用LR，'multinomial'代表使用softmax。而使用ovr的时候，
+	如果是多分类，则用多个二分类。
+
+TensorFlow中一般对三通道图像做卷积，都是先加权求和再做卷积(注意先加权求和再卷积与
+	先卷积再加权求和结果一样)，形象化的描述就是先把3通道压扁成一通道，再把它用x个卷积核提溜成x
+	通道(或者先把3通道用x个卷积核提溜成3x个通道，再分别压扁得到x个通道)；而depthwise_conv2d
+	就不加权求和了，直接卷积，所以最后输出通道的总数是in_channels*channel_multiplier
+	
+pip install --upgrade keras
+
+所谓卷积神经网络，就是会自动的对于一张图片学习出最好的卷积核以及这些卷积核的组合方式，
+	也就是对于一张图片的任务来说，求出最好的图片对于本任务的特征的表达，然后来进行判断
+	
+tf.nn.max_pool
+第二个参数ksize：池化窗口的大小，取一个四维向量，一般是[1, height, width, 1]，因为我们不想在batch和channels上做池化，所以这两个维度设为了1
+
+两张图像的结合版本将会给我们一个清晰的图片。因此，我们所做的是简单地使用多个权重而不是一个，
+	从而再训练图像的更多信息。最终结果将是上述两张图像的一个结合版本。
+	上面我们所做的事是试图通过使用图像的空间的安排从图像中提取特征。为了理解图像，理解像素如何安排对于一个网络极其重要。上面我们所做的也恰恰是一个卷积网络所做的。我们可以采用输入图像，定义权重矩阵，并且输入被卷积以从图像中提取特殊特征而无需损失其有关空间安排的信息。
+
+权值矩阵在图像里表现的像一个从原始图像矩阵中提取特定信息的过滤器。
+	一个权值组合可能用来提取边缘（edge）信息，另一个可能是用来提取一个特定颜色，
+	下一个就可能就是对不需要的噪点进行模糊化。先对权值进行学习，然后损失函数可以被最小化，
+	类似于多层感知机（MLP）。因此需要通过对参数进行学习来从原始图像中提取信息，
+	从而来帮助网络进行正确的预测。当我们有多个卷积层的时候，初始层往往提取较多的一般特征，
+	随着网络结构变得更深，权值矩阵提取的特征越来越复杂，并且越来越适用于眼前的问题
+	
+mnist数据集中，用mnist = input_data.read_data_sets方式导入的数据集(这是TensorFlow的方法)，可以用mnist.train来获取训练集
+用 load_data(这是keras方法)方式获取数据集，(X_train, y_train), (X_test, y_test)=mnist.load_data("../data")
+
+axis=0 按行操作，axis=1，按列操作，行操作，列不变，列操作，行不变。
+添加偏置有2中方式
+1、tf.nn.relu(conv2d(h_pool1,W_conv2)+b_conv2)
+2、bias = tf.nn.bias_add(conv,biases)， tf.nn.relu(bias,name=scope)
+
+在sparkMLlib中，逻辑回归和softmax回归都是LR，如果ovr,代表是二分类，如果本身是多分类，则是多个
+	二分类。
+TensorFlow中SAME和VALID的区别，开始时，应该是从图像的左上角开始，核与图像对齐，
+	而不是用核的中心点去对齐图像的左上角的第一个像素点。SAME方式，当按步长移到右端时，不足的
+	地方补零。而VALID方式是，不足的地方舍弃。
+tf.nn.softmax_cross_entropy_with_logits与tf.nn.sparse_softmax_cross_entropy_with_logits
+	方法的区别主要在label的表示上的区别，前者要表示成[batch_size,num_class]的矩阵形式，
+	后者直接是[batch_size]的向量形式。sparse的稀疏不是指onehot编码，而是一条记录只能属于一个
+	类别。[0,1,1,2,4],比如，这5条记录中每条记录分别只能属于某一个类别。
+mnist数据集中，如果没有用onehot=True，打印y的时候是[0,1,1,2,4]，如果用了的话，打印y的形式是
+	[ 0.  0.  0.  0.  0.  0.  0.  1.  0.  0.]。如果用softmax_cross_entropy_with_logits，onehot=True
+tf.nn.in_top_k(logits,labels),labels和sparse_softmax_cross_entropy_with_logits的表示一样，
+	只能是指明属于某一个类别。
+tf.argmax方法可以将onehot表示的编码变成sparse_softmax_cross_entropy_with_logits接收的
+	labels形式一致。
+np_utils.to_categorical()变成onehot编码 keras
+tf.sparse_to_dense
+计算机能够通过寻找诸如边缘和曲线的低级特征，然后通过一系列卷积层
+	来构建更抽象的概念来执行图像分类。这是CNN功能的总体概述
+我们讨论了第一个转换层中的滤波器被设计为检测什么。它们检测低级特征，如边缘和曲线
+	https://yq.aliyun.com/articles/231697?spm=a2c4e.11153959.blogcont552464.10.331b53d0IGdl5C
+	当我们谈论第一层时，输入只是原始图像。然而，当我们谈论第二个转换层时，
+	输入是从第一层产生的激活图。因此，输入的每一层基本上都描述了原始图像中出现某些低级特征的位置。
+	现在当你应用一组滤波器（通过第二个转换层）时，输出将是表示较高级特征的激活图。
+	这些特征的类型可以是半圆（曲线和直边的组合）或正方形（几条直边的组合）。
+	当你通过网络并通过更多的转换层时，你将获得代表越来越复杂特征的激活图。
+	
+数据和特征决定了机器学习的上限,而模型和算法只是逼近这个上限而已。
+train_test_split
+cross_val_score:交叉验证的得分，可以根据这个分数来判断参数的好坏，返回k-fold个score
+cross_val_predict:它的功能就是返回每条样本作为CV中的测试集时，对应的模型对于该样本的预测结果
+sgd_clf.decision_function:计算点到分割超平面的距离，即逻辑回归的z值。
+先训练模型，再用模型调用decision_function得到z值与阈值比较，或者直接调用cross_val_predict,在
+	methon参数随着decision_function
+GridSearchCV
+accuracy_score(y_test,y_pred)
+metrics.roc_auc_score(test_y,prodict_prob_y)验证集上的auc值
+from sklearn.datasets import load_svmlight_file
+org.apache.spark.mllib.util.MLUtils.loadLibSVMFile
+SVM是一种有监督的线性分类模型。
+
+牛顿法是通过一次又一次的迭代，最终求得函数解的方法
+机器学习是求损失函数的最小值，而牛顿法是求函数的根，怎么讲二者结合起来求函数的最小值呢，
+	求导数为0即为函数的最小值，而导数为0即就导函数的根。
+	求某个函数的驻点，即是求导函数的根。
+牛顿法求驻点的本质是用二阶泰勒展开式对原函数的最佳拟合。在xk点附近用二次函数拟合原函数最好的
+	二次函数。某个点附近拟合最好
+每一次迭代都是在x0附近找一个能跟原函数拟合的最好的二次函数，求二次函数的最小值，在新求出的
+	点再拟合出一个二次函数，再求最小值，不停的往复，最后得出的结果就是原函数真正的最小值。
+	
+momentum,继续往前冲，有可能冲出最优解，adagrad，提前结束迭代。adam是momentum和adagrad的中和。
+Adadelta是对Adagrad的扩展
+RMSprop算是Adagrad的一种发展，和Adadelta的变体，效果趋于二者之间
+
+BaggingTree和Random
+np.cumsum累加
+
+协方差矩阵：cov_mat = (X_std-mean_vec).T.dot(X_std-mean_vec)/(X_std.shape[0]-1)=np.cov(X_std.T)
+
+np.random.permutation(60000)
+如果传给permutation一个矩阵，它会返回一个洗牌后的矩阵副本；
+	而shuffle只是对一个矩阵进行洗牌，无返回值。 如果传入一个整数，它会返回一个洗牌后的arange。
+各种优化器的对比:
+https://blog.csdn.net/u014595019/article/details/52989301
+BGD:
+
+推荐系统
+1、用户信息
+2、商品的基本特征
+3、用户对商品的偏好程度(隐式和显示，一般拿到的是隐式)
+
+sparkMLlib中，Scala语言叫run，python语言叫train
+sklearn中叫fit
+ val lr = new LogisticRegressionWithSGD()
+ lr.run(la)
+ 
+val model: LogisticRegressionModel = LogisticRegressionWithSGD.train(trainData, 30, 0.8, 1.0)
+
+CountVectorizer:词频 from sklearn.feature_extraction.text import CountVectorizer
+TfidfVectorizer	from sklearn.feature_extraction.text import TfidfVectorizer
+Word2Vector genim,sparkMLlib中也有，org.apache.spark.mllib.feature.Word2Vec
+
+enumerate列出数据和下标，一般用于for中
+
+一个分类器最好的情况是1，最差的情况不是0，而是二分之一，和瞎蒙一样了，如果最差是0的话，
+	我们反着用不就是最好了吗？所以最差的情况是二分之一。
+AdaBoost，调整输入数据的权重，生成g(t)，如何调整权重呢？调整的目标就是，要找到新的权重
+	让数据加权之后的权重投到上一步的g(t)中，最后的分类效果是二分之一，也就是最差。相当于
+	我们要把原来g(t)处理最不好的暑假集拿出来，训练出一个新的模型，这样新的模型可以处理原来g(t)
+	照顾不到的地方，这样g(t+1)就会选出来一个和原来的g(t)不同的函数，g(t)表现好的地方,g(t+1)
+	不知道，g(t)表现不好的地方，g(t+1)表现的特别好。这样每次迭代我们都生成一个与上一次完全不同
+	的函数，这样我们就可以得到一组从g1(x)到gT(x)的函数
+	弱分类器的准确率应该强于二分之一，这样才有资格成为弱分类器。
+	把t+1的权重投到g(t)中，让g(t)表现最差
+AdaBoost是GB的特例，通过梯度最小那个指数函数的时候就是AdaBoost,最小化的是mse得到的就是GBDT
+Gradient Boost是一个框架，可以用梯度的方式来优化任何一个损失函数
+ls list square
+GradientBoostingRegressor就是GBDT
+SparseVector:from pyspark.mllib.linalg import SparseVector
+	指明长度，index和index所对应的值即可，默认的vector
+denseVector:from pyspark.mllib.linalg import DenseVector
+Vectors.dense->org.apache.spark.mllib.linalg.Vectors
+Vectors.sparse
+
+fit_transform与transform运行结果一致，但是fit与transform无关，
+	fit是为了程序的后续函数调用而服务的，是个前提条件。
+it_transform()干了两件事：fit找到数据转换规则，并将数据标准化
+	transform()可以直接把转换规则拿来用，所以并不需要fit_transform()，
+	否则，两次标准化后的数据格式就不一样了
+lr.score(X_test, y_test)
+sgdc.score(X_test, y_test)
+classification_report：sklearn中的classification_report函数用于显示主要分类指标的文本报告．
+	在报告中显示每个类的精确度，召回率，F1值等信息
+GBDT人为的指定训练轮次，不指定收敛的阈值。
+AdaBoost如果选择决策桩的话只分裂一次，指定max_depth=1即可
+
+q(t)*g(t):q(t)代表是否落到t个节点，g(t)代表t节点的输出
+决策树要解决的四个问题
+1、怎么分
+2、分几支(每个节点有多个分支)
+3、怎么停止迭代(怎么停止继续分)
+4、分到当前节点代表什么(怎么表示输出)，怎么表达最后的结果
+
+gini越小，信息增益越大，信息增益率越大越好
+系统熵
+
+cart id3分2支，c4.5根据增益率来算，爱分几支分几支。
+LBFGS和决策树不需要归一化。
+
+比如掷骰子，6个面，熵最大的时候是每个点都为六分之一。每个面都有可能取到。如果1这个面做了
+	手脚，其余5个面的概率应该是1-1这个面的概率的平均。瞎猜，不能特意的倾向于某个面。
+	在投资领域也是一样，已知某个领域稳赚，其他领域不知道亏损的时候，在其他领域投的足够多，最后
+	的总投资是赚的。
+特征函数是从不同的角度观察样本
+训练集中每条记录有m个特征，真实值与预测值之间的差值即误差。由于真实的x不止这m个特征
+	那些没统计到的特征相加就是误差，这个相加就是之前课程的误差相加。所有的误差我们假设它
+	是符合正太分布的。
+
+决策树的数学表达中，qt表示分配器，分配到哪个节点。gt表示该叶子节点的表达器。
+	qt代表树的结果，gt代表叶子节点的输出。给决策树一条数据(所有特征)，qt会告诉你最终落在哪个
+	节点上，gt代表落在该节点上最终会输出什么
+决策树的迭代形式
+
+编码长度和概率是相关的 -log2(pi),熵代表平均码长越短，描述一大堆答案的时候，总的信息位数越小
+概率越平均的时候，熵最大。
+若随机变量退化为定值的时候，熵最小为0，
+若随机变量均匀分布的时候，熵最大。
+最大熵的哲学思想为：在已知样本情况下，从所有可能的模型中，
+	选择没有额外假设的那一个（没有额外假设即没有额外信息，所以也可以理解为熵最高）
+对一个随机事件的概率分布进行预测时，我们的预测应当满足全部已知条件，
+	而对未知的情况不要做任何主观假设。在这种情况下，概率分布最均匀，预测的风险最小。
+信息量的期望值就是熵。
+
+先用gbdt做一个分类的问题的时候，我们并不是把g(x)换成分类树，还是一棵回归树，回归树的值
+	我们不拿来直接用，把它放到sigmod函数中去。
+	
+HMM中PI,A,B的解释:
+	PI:假设有3个盒子，有红白2个球，PI的解释是，第一个盒子的概率是0.2，第二个是0.4，第三个是0.4
+	A:对行来说，第一次拿到第一个盒子，第二次拿到第一个盒子的概率是0.5，第一次拿到1，第二次拿到
+		2的概率是0.2，第一次拿到1，第二次拿到3的概率是0.3
+	B:对行来说，取的是红的概率是0.5，白的概率是0.5
+	
+线性回归推导公式时，用到了最大似然的思想，高斯分布，均值为0，标准差sigma。最大所有p相乘最大
+逻辑回归推导公式时，也用到了最大的似然的思想，所有概率相乘最大，
+	但单个p不再是高斯分布的概率密度函数。p^yi+(1-p)^(1-yi)
+如何估计高斯分布的参数时，还是用到了最大似然的思想。
+
+E_OOB:随机森林中，训练t棵小树的时候，每一棵小树都有某些样本没被抽到，假设训练集有N个样本，
+	对样本1来说，它有可能没被这t棵小树中的某些树抽到，把没抽到的小树组成一个G-，将样本1用来
+	验证G-，这个，有N个样本就有N个不一样的G-，将每个样本用来验证各自的G-，把预测错了的G-的个数
+	加起来/N,就是E_OOB
+为什么不能用多元线性回归来拟合0,1？
+	1、假设有一个肿瘤大小非常大的数据，那么直线会向该点偏离，导致原先是恶性的也变成良性的了
+	2、线性回归是一个打分的机制，超过图中的那个值为正分，小于那个值为负分，最后只要分数大于0，
+		我就认为他是恶性肿瘤，甭管你分数有多大，我们也认为是恶性肿瘤，在分类问题上我们分辨不出来
+		你是得了肿瘤了还是得了非常恶性的肿瘤。用线性模型是体现不了特别恶性的情况的。
+		假如你分数大于0，得到1，分数<0，得0，假如你分数特别大，一百万，也得不出2，假如你的分数特别
+		小，负一百万，结果还是0，所以我们希望得到一个模型，模型拿到我们的数据之后先做一个线性加权，
+		相当于我们例子中的评分，然后让这个评分再大也就趋近于1，再小也就趋近于0，这样我们就达到了
+		比较科学的分类问题了。
+	这种肿瘤和非常恶性的肿瘤，如果在预测问题里应该是不一样的。一个是特别恶性的那种，一个是普通恶性
+		的那种，但是如果我们给他分类，无论是特别恶性还是普通恶性，我们都给他分成了1。在这个1上
+		体现不出来是特别恶性还是普通恶性。如果是线性回归，更像是在拟合一种恶性到什么程度。但是
+		如果是分类的话，就需要即使是特别恶性，或者是这个例子中条件特别好的，你也给他归一到1的内部
+		来作为一个分类输出，失去了概率意义。
+	线性回归如果简单粗暴的把0和1当做线性回归里面你要找的预测值然后做一个多元线性回归的话，他的
+		输出是没有概率意义的。
+决策树分为3中，CART,ID3,C4.5,cart树一般用gini和mse，id3用entropy，c4.5用信息增益率
+	可是在实际使用中，假如我们传impurity='entropy'也是使用cart树。因为如果分成n叉树，我们同样
+	可以分成二叉树，多分几层就行了。只有c4.5是使用多叉树，实际中少用。
+	
+生成古诗的案例中，传入的数据是[batch_size,s_step],即诗的数目和当前批次中诗的最大长度。也就是
+	rnn中的step的数目，向前看多少个step。
+	
+spark ml模块中，有2中验证参数的方式，一种是rf_tvs = TrainValidationSplit，每个模型的训练集和
+	验证集是一样的。还有一种是CrossValidator，相当于交叉验证，每个模型都要跑kfold次。kfold即
+	几折交叉验证。最终的指标比如auc，是k个模型的平均值。将这个平均值当做要验证的模型的auc指标。
+	
+TFIDF:
+词频 (TF) 是一词语出现的次数除以该文件的总词语数。假如一篇文件的总词语数是100个，
+	而词语“母牛”出现了3次，那么“母牛”一词在该文件中的词频就是3/100=0.03。
+	一个计算文件频率 (IDF) 的方法是文件集里包含的文件总数除以测定有
+	多少份文件出现过“母牛”一词。所以，如果“母牛”一词在1,000份文件出现过，
+	而文件总数是10,000,000份的话，其逆向文件频率就是 lg(10,000,000 / 1,000)=4。
+	最后的TF-IDF的分数为0.03 * 4=0.12。
+	
+在sklearn中使用cross_val_score达到交叉验证的效果或者使用GridSearchCV。
+在spark mllib中，evalAllParameter方法是使用同一份训练集和验证集，传入不同的模型参数，用每一种模型
+	参数的组合生成N个模型，再用验证集验证该模型的指标。由于验证集和训练集是固定的，所有模型的参数
+	和训练集与验证集的划分有一定的关系。交叉验证的出现就是为了解决模型的评估指标受切分的数据集的影响
+	而出现的。
+	在ml中用TrainValidation这个类来实现和evalAllParameter方法同样的功能，但ml中同时还提供了另外
+	一种使用交叉验证的方式CrossValidator来验证
+	
+N VS N:
+	计算视频中每一帧的分类标签。因为要对每一帧进行计算，因此输入和输出序列等长
+	输入为字符，输出为下一个字符的概率(Char RNN)
+N VS 1:这种结构通常用来处理序列分类问题
+	输入一段文字判别它所属的类别
+	输入一个句子判断其情感倾向
+	输入一段视频并判断它的类别
+1 VS N:
+	从图像生成文字（image caption），此时输入的X就是图像的特征，而输出的y序列就是一段句子
+		这种应该也可以用N VS M的模型来计算，将图片看成序列数据，参考mnist 用rnn图片识别
+	从类别生成语音或音乐等
+N vs M:
+	机器翻译
+	自动聊天机器人
+	文本摘要自动生成
+	机器写诗歌、代码补全、生成 commit message、故事风格改写等。
+	
+AdaBoost,外层循环遍历特征，内层循环遍历特征值。
+	生成第一棵树的时候，以哪个特征值分裂能让权重正确率最大。
+	在Un+1权重的前提下，我们要让gt(x)表现的最差
+	把第一代分类器，通过调整数据集的权重，让他最后的权重正确率变为了0.5，就能最大的程度的
+	把我们数据集上的数据把他没有做到的点突出出来了
+	拿gt去判断Un(t+1)这组权重数据下的时候，让gt最差
+	下一轮的g(t+1)要完成什么样的使命，是把g(t)当时没做好的事着重考虑一下，需要通过Un(t+1)间接
+	完成这个使命，Un(t+1)就变成了原来gt没做好的那些事了。所以Un(t+1)要求g(t)在Un(t+1)上的表现是
+	最差的
+	
+	
+随机森林中，有个特性是会生成新的特征，x1+x2,等等，多棵树的时候有smooth的效果。
+	比如某个点，在第一个树是A类，第二棵树是B类...，最后多棵树叠加，就会有smooth的效果
+	
+GBDT中，有2个超参数，一个学习率和每个弱分类器的权重(默认为1)，
+	xgboost中，2个参数都体现在eta上了。eta*f(x)
+	
+svm不适合大数据集，因为afa和数据集的数量
+
+最大熵模型:最大熵模型最优化w的过程等价于对最大熵模型进行最大似然估计
+	定义了m个特征函数，算下每个特征函数在训练集上的期望，用一个表达式，把我们要预测出来的概率
+	表达出来他和特征函数的关系，另2个东西相等，就可以求出和训练集之间的关系了，可以作为一个已知
+	条件传到模型中了，二者相等才有承认已知的意义
+	承认已知(通过约束条件)，不对未知做任何假设(求令条件熵最大的p(y|x)的解)
+第一步，min L函数的过程已经得出了P(y|X)关于w的等式，第二步应该将这个关于w的式子代回到L函数中
+	再求让函数最大的w，这样我们就求出了w，但我们不这样做，我们用从极大似然估计的角度来思考问题，
+	极大化第二步和极大似然估计有什么关系呢？其实二者是一样的。
+	
+tf.truncated_normal_initializer(stddev=0.02)
+df.sort()
+data.sort_values(by='b',ascending=False)
+data.sort_index(axis=0)--按轴进行排序
+df.sort(columns='B')--按值进行排序
+pd.read_csv
+pd['列名'].str.split()
+data['sort_num']=data['comment_num'].rank(ascending=0,method='dense')
+
+exe_data = pd.ExcelFile('执行招聘职位.xls',sheetname=5)
+table2=exe_data.parse('mingxi')
+df = pd.DataFrame(table2)
+df[df['列名'].isin([相应的值])]
+df.loc[df['职位ID']==4113510]['岗位类型']
+df.loc[df['职位ID']==4113510,'岗位类型']='tetst'
+post_name = post_info.get_value(i,'title.1')
+rpo_data.set_value(i,'类别',post_name)
+idx = post_info[post_info['post_id']==post_id].index.tolist()
+data.drop_duplicates(['age'],keep='first')
+data.shape[0]
+DF= DF.drop('column_name', axis=1)；
+DF.drop('column_name',axis=1, inplace=True)
+DF.drop([DF.columns[[0,1, 3]]], axis=1, inplace=True)   # Note: zero indexed
+process_df = df.ix[:,[5,0,1,2,3,4,6,7,8,9]]
+
+Pandas.factorize( )
+Pandas.get_dummies( )
+
+
+b = tf.get_variable('b', [num_classes], initializer=tf.constant_initializer(0.0))
+d_w1 = tf.get_variable('d_w1', [5, 5, 1, 32], 
+	initializer=tf.truncated_normal_initializer(stddev=0.02))
+theta = tf.Variable(tf.random_uniform([n+1,1],-1.0,1.0),name='theta')
+biases = tf.Variable(tf.constant(0.0, shape=[192], dtype=tf.float32),
+                         trainable=True, name='biases')
+x3 = tf.Variable(3)
+
+import tensorflow.contrib.learn.python.learn as learn
+
+下面实际上还是从最原始的路劲中导入
+tf.contrib.legacy_seq2seq.sequence_loss(logits,targets=targets,weights=weights)
+tf.contrib.legacy_seq2seq.sequence_loss_by_example
+
+from tensorflow.contrib.legacy_seq2seq.python.ops.seq2seq import sequence_loss_by_example
+from tensorflow.contrib.legacy_seq2seq.python.ops.seq2seq import sequence_loss
+
+grads,_ = tf.clip_by_global_norm(grads,args.grad_clip)
+optimizer.apply_gradients(zip(grads,tvars))
+
+my_optimizer = tf.contrib.estimator.clip_gradients_by_norm(my_optimizer, 5.0)
+
+from tensorflow.contrib import rnn
+rnn.BasicLSTMCell
+rnn.MultiRNNCell
+在tensorflow/contrib的__init__.py from tensorflow.contrib import rnn
+在rnn的__init__.py中，from tensorflow.python.ops.rnn_cell import *
+
+from tensorflow.python.ops.rnn_cell_impl import BasicLSTMCell
+tf.nn.rnn_cell.BasicLSTMCell，tf.nn，是在tensorflow文件夹下的__init__.py文件
+	from tensorflow.python import *，
+	在 tensorflow.python模块下的__init__.py from tensorflow.python.ops import nn
+	在nn.py中 from tensorflow.python.ops import rnn_cell，所以才可以使用tf.nn.rnn_cell
+	
+np.random.shuffle
+from sklearn.utils import shuffle
+data = shuffle(data,random_state=1)
+np.random.permutation(60000)
+
+from tensorflow.contrib import rnn
+rnn.BasicLSTMCell
+rnn.MultiRNNCell
+
+from tensorflow.python.ops import rnn_cell
+rnn_cell.BasicLSTMCell(100)
+
+tf.contrib.rnn.MultiRNNCell
+tf.nn.rnn_cell.MultiRNNCell
+from tensorflow.python.ops import rnn_cell
+rnn_cell.GRUCell
+rnn_cell.MultiRNNCell
+from tensorflow.contrib import rnn
+
+马尔科夫过程：
+在给定当前知识或信息的情况下，过去（即当前以前的历史状态）
+	对于预测将来（即当前以后的未来状态）是无关的
+每个状态的转移只依赖于之前的 n 个状态，这个过程被称为1个 n 阶的模型
+
+马尔可夫性质是概率论中的一个概念。当一个随机过程在给定现在状态以及
+	过去所有状态的情况下，其未来状态的条件概率分布仅依赖于当前的状态；
+	换句话说，在给定现在状态时，它与过去状态（即该过程的历史路径）是条件独立的，
+	那么此随机过程即具有马尔可夫性质。具有马尔可夫性质的过程通常称之为马尔可夫过程。 
+
+模型调参的时候实际上是在平衡过拟合和欠拟合之间一个程度大概有多大
+过拟合又叫hight variance欠拟合又叫hight bias 
+
+jupyter notebook中，[]内放文字把url直接黏贴过来即可加超链接，如果不行，将url放到小括号内。
+
+lr = tf.train.exponential_decay(INITIAL_LEARNING_RATE,
+                                  global_step,
+                                  decay_steps,
+                                  LEARNING_RATE_DECAY_FACTOR,
+                                  staircase=True)
+								  
+目标函数评价的是和标准答案之间的相似度，损失函数评价的是和标准答案之间的差异程度
+广州市 越秀区穗丰大厦A707
+
+woe(weights of evidence):证据权重，分箱中，可以看成每个箱的权重。
+影响的正负方向看系数的正负，影响的大小看exp(b)
+iv:衡量某个变量与标签的重要程度，可以根据某个特征的iv值来选取特征。
+没有正则的线性回归中，把特征之间看做是独立的，且和Y之间是线性相关的，可以直接用线性模型来检测
+	哪些特征是重要的，否则，先用协方差矩阵检测X之间的相关性，去除相关的特征，剩下的就是不线性
+	相关的特征。L1正则可以使那些弱的特征所对应的系数变为0，L1正则和非正则化线性模型一样是
+	不稳定的，L2正则可以让关联特征获得更相近的系数，L2是一种稳定的模型
+	
+plt.gca():获取坐标轴
+
+fig = plt.figure()
+ax = plt.add_subplot(fig)
+
+ax = plt.axes()
+ax.plot()
+
+针对样本不均衡问题
+1、欠采样(下采样)：去除反例使得正负样本数目接近
+2、过采样(上采样)：增加正例使得正负数目接近
+3、设置阈值y_/(1-y_) = y/(1-y)*m(负例数目)/m(正例数目)
+	y_：阈值，y:对新样本预测的概率
+奇异值探测（novelty detection）：
+异常值探测（outlier detection）：
+
+1、有一种表现可以增进，有一种目标
+2、规则存在，但是不知道怎么写规则
+3、数据
+
+基础包：numpy,scipy
+大神级数据挖掘包：sklearn
+数据读取与探索：pandas
+数据不均衡：imbalanced-learn
+分词包：jieba
+大神级nlp包：gensim（word2vec和LDA），NLTK
+深度学习包：TensorFlow，Keras
+集成学习包：heamy
+调参包：hyperopt
+
+对于模型组合方式，不同于前面两个方法采用多数投票或算术平均的线性组合策略，
+	stacking采用的是基本模型非线性组合的方式。
+最后总结一点：bagging和stacking中的基本模型须为强模型（低偏差高方差），
+	boosting中的基本模型为弱模型（低方差高偏差）
+	
+df.plot.box()
+df.box()
+df.boxplot()
+df.plot(kind='box')
+
+一个hypothesis set到底可以做出多少种不一样的dichotomy
+大大的hypothesis set用在这n个点上，可以产生出多少种dichotomy，我们把这些dichotomy放在一个
+	集合里，这个集合我们还是用H来表示，不过这个集合的后面加上X1，X2,...Xn,即H(X1,X2,...Xn)
+	来代表说我们现在看的事情是dichotomy而不是原来的hypothesis set
+hypothesis set 可能是平面上所有的直线，dichotomy则是只对n个特定的点来做取值。从大小来看，
+	hypothesis set可能有无限多条，dichotomy代表有几种不一样的组合，最多最多是2**N
+最大的dichotomy set的大小
+effective number of lines就是现在想mH(N),也即是growth function,小m的意思是将来我们要取代M，
+	H代表和我们的hypothsis set有关
+	
+当假设空间H作用于N个input的样本集合时，产生的dichotomy数量等于这N个点总的组合数，要注意到shatter
+	的原意是打碎的意思，在此指“N个点的所有(碎片般的)可能情形都被H产生了”。
+成长速度大概跟N的k-1次方有关。
+
+有一堆的向量，这些向量其实就是我们的dichotomy，长度为N(由圈圈叉叉组成的)，我们做一个限制，
+	我们把它的某些维度遮起来，我们只看其中的k个维度，我都不希望看到圈圈叉叉所有情形，我们不希望看到
+	2**N种组合，不能出现shatter。B(N.k)。
+B(N.k)小于或等于poly(N)?
+
+#如果时间比较长，且数据质量好，比如自然界中的存在的，如鸢尾花的长度，宽度等，这种特征
+#	应该考虑是否成正太分布，然后可以直接使用，自然界的，不受主观因素的，考虑整体是否成
+#	正太分布
+#	主观的，应该考虑每个段是否成正态分布
+
+也就是说，如果我的hypothesis在D跟D`上做出一样的prediction，一样的dichotomy的话，那么他的Ein
+	和Ein`会长的一样，所以我们只要把我们所有的hypothesis分成H(x1,x2,...xn,x1`,x2`,...xn`),
+	也就是说在这2N个点上看我做出多少个dichotomy，这样最多就是mH(2N)
+	有一个固定的hypothesis，想看下2次sample的差别
+	
+当N<=dvc,存在某个资料可以被H shatter
+
+付出很大的model  complexity的代价，付出了多少的penety，付出了多少的成本。最强的hypothesis set
+在VC dimension上面，这个hypothesis可以shatter掉某n个点。deige  telta prong yita
+
+把LinearRegression放在分类的问题上的方式，
+	先用closed-form算出W用在pocket的W0.或者直接可以用于分类，因为err01<err(square),
+	只要我们把square做到最好，那么err01也会很低
+
+目标分布会对应到一个理想的目标函数，目标函数实际上是把目标的分布去说是大于0.5(是在几率比较大的
+	那一边还是在几率比较小的那一边)来决定到底要预测什么。
+	
+目前只有2中方式,LinearClassification,这种神奇的更新方式，另一种是LinearRegreesion,closed-form
+
+在z空间的每一个perceptrons可以帮助我们实现某一个在x空间里面对应的分类方式
+
+原来的D有2个角色，要丢到算法里面生成g，又要算E_in
+
+hard，不能违反任何边界，soft，可以在边界里面。
+
+蒙特卡洛方法是求函数或者随机变量的期望，当p(x)非常复杂时，无法采样，
+	可采用重要性采样的方式来计算期望。
+	
+调下我们的weight，让小gt在新一轮的weight上会表现不好，那么跟小gt长的很像的都不会被选到。
+	我们会选到很不一样的当做我们的小g(t+1)
+	
+bagging能减小方差，DT正好有比较大的方差。
+
+TensorFlow中多任务学习的2种训练方式:
+1. 交叉训练
+	交叉训练类似于sklearn中MultiOutputClassifier,多个模型。只不过将多个模型
+	合在一个NN中了。适用于每个模型都有各自训练集的情况下
+2. 联合训练
+	联合训练类似于sklearn中的Multilabel classification ,只有一个数据集，每一个X
+	对应多个label。
+	
+infoGAN:
+1.tf实现时，可以把D和Q看成一个loss，即采用联合训练的方式。真实的X进入D时，输出logits和c，
+	而真实X的c没有用，生成的X进入D时，输出的logits和c是有用的。而判别器的又有生成的X。
+	当把D和Q看成不同的loss时，则有3个loss，D_loss,Q_loss,G_loss。分别最小化。
+2.keras实现时，X_real进入D，输出一个logits代表真实数据的概率，X_fake进入D时，输入logits
+	和c，2个输出。
+
+语言模型（Language Model）:
+	语言模型简单来说就是一串词序列的概率分布。具体来说，
+	语言模型的作用是为一个长度为m的文本确定一个概率分布P，表示这段文本存在的可能性
+	P(wi | w1, w2, . . . , wi−1)
+NLP的四大类任务:
+（1）序列标注：分词、实体识别、语义标注……
+（2）分类任务：文本分类、情感计算……
+（3）句子关系判断：entailment、QA、自然语言推理
+（4）生成式任务：机器翻译、文本摘要
+
+TF中BN的实现，在训练阶段，会记下每个batch的mean和variance记为moving_mean和moving_variance
+	moving_mean = moving_mean * decay + new_batch_mean * (1 - decay)
+	论文中说，在测试阶段，直接用的最后的mean和variance来预测。第二种，记录每个batch的
+	均值和方差，求这些均值的均值和这些方差的均值
+
+动态定价
+https://www.kaggle.com/thykhuely/mercari-interactive-eda-topic-modelling
+
+word2vec优化的其实主要是针对skipgram模型，当模型训练完之后，主要是为了得到权重，从而
+	得到词的词向量，cbow模型，训练是很方便的。而skipgram模型，训练的时候需要计算每个词
+	的softmax，因此计算量很大，采用hierarchical softmax和负采样来优化，
+	而负采样的采用2个矩阵来训练。(新的理解参考pdf文件)
+	在pdf文件中展示了原始的基于ae的方式训练的w2v.没有激活函数。输入和输出的维度都是
+	字典词的维度。h代表输入的隐层状态，h乘以输出的W(N*V),在对每个词归一化
+	
+blending的做法就是将已经得到的矩进行aggregate的操
+利用bootstrap进行aggragation的操作就被称为bagging
+
+MCGE:
+当优化目标是随机函数时，最核心的计算问题是对随机函数F(θ)的梯度进行计算。
+期望的梯度。然后期望的梯度很难求，通过MCGE的方式转换为梯度的期望。SFGE,PGE
+简单总结一下，优化是机器学习训练中最重要的部分，而其中很多优化问题都
+	是形如公式（1）的问题，而 MCGE 是解决这类问题的有效手段，
+	接下来介绍两种经典的 MCGE 方法。
+	
+在tf中，获取变量有2种方式：
+1. with tf.variable_scope('target_net')，
+	然后用tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES,scope='target_net')
+	获取。参考nature_dqn.py
+2. 在tf.get_variable方法里指明collections，参考RL_brain.py(5_Deep_Q_Network)
+	然后用tf.get_collection('target_net_params')获取变量
+self.params = [param for param in tf.trainable_variables() if 'discriminator' in param.name]
+self.ae_params= tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES,scope='Actor/eval')
+
+word2vec:
+	统计语言模型
+		p(w/context(w))最大
+		p(w|context(w)) = F(w,context(w),theta)
+		n-gram
+		神经网络语言模型
+			输入，投影，隐藏，输出层
+			取其前面的n-1个词，与当前词(context(w),w)组成了一个训练样本
+			z = tanh(Wx+p),x由前n-1个向量首尾拼接成一个长向量
+			y = Uz+q
+		RNNLM
+	CBOW
+		样本(context(w),w)
+		hierarchical softmax的CBOW的目标变为logp(context(w)|w)
+		应该把重心放在p(w|context(w))或者p(context(w)|w)
+		输出层:包含2c个词向量，将2c个词向量累加求和，得到x_w,输出层构造一颗huffman
+			树，每个非叶子节点都对应一个和x_w等长的向量，用来计算score输入到sigmoid
+			函数中计算概率
+		论文中h与输出词向量相乘，得到一个V的score
+	SkipGram
+		样本(w,context(w)),用hierarchical softmax来求解的话，思路同上
+		
+	原始的CBOW和SkipGram算法都是没有经过优化的，softmax。
+	
+	hirarchical softmax 和nagetive sampling都可以解决CBOW,Skip-gram
+	如果用nagetive sampling的方法来解决CBOW 和Skip-gram模型，都需要采样
+	
+	词嵌入：初始化2个矩阵，嵌入矩阵和context矩阵，输入从嵌入矩阵中lookup向量，
+	context从context矩阵中lookup向量
+	
+	《word2vec Parameter Learning Explained》论文中
+		2个矩阵W=V*N，V为词的个数，N为嵌入维度W`=N*V
+		一个词的情况，先在W矩阵中得到该词的向量，然后与W`相乘，得到每个词的
+		非规范化概率。
+		
+特征并行的主要思想是在不同机器在不同的特征集合上分别寻找最优的分割点，
+	然后在机器间同步最优的分割点。 
+数据并行则是让不同的机器先在本地构造直方图，
+	然后进行全局的合并，最后在合并的直方图上面寻找最优分割点
+	
+ lgbm特征并行的前提是每个worker留有一份完整的数据集，
+	但是每个worker仅在特征子集上进行最佳切分点的寻找；
+	worker之间需要相互通信，通过比对损失来确定最佳切分点；
+	然后将这个最佳切分点的位置进行全局广播，每个worker进行切分即可。
+​ xgb的特征并行与lgbm的最大不同在于xgb每个worker节点中仅有部分的列数据，
+	也就是垂直切分，每个worker寻找局部最佳切分点，
+	worker之间相互通信，然后在具有最佳切分点的worker上进行节点分裂，
+	再由这个节点广播一下被切分到左右节点的样本索引号，其他worker才能开始分裂。
+	二者的区别就导致了lgbm中worker间通信成本明显降低，
+	只需通信一个特征分裂点即可，而xgb中要广播样本索引
+lgb.cv:因为是cv，本来就有验证集，如果设置了early_stopping_rounds=3,
+	再经过了3次还有改善的情况下，就会提前停止训练。这样的话数据的list的个数就为
+	最优的n_estimators的数目，如果不提前停止，这通过idxmin()来获取最优的
+	n_estimators的数目
+bst = lgb.train(param, train_data, num_round, valid_sets=valid_sets, 
+      early_stopping_rounds=10)
+bst.save_model('model.txt', num_iteration=bst.best_iteration)
+ypred = bst.predict(data, num_iteration=bst.best_iteration)
+lgb中，cv的参数是'metrics':['rmse','l2'],train的时候，如果有
+	early_stopping_rounds，则评估参数是'metric':{'l2','rmse'},
+
+lgb的categorical_feature
+categorical_feature, default="", type=string, alias=categorical_column, cat_feature, cat_column
+    指定分类特征
+    用数字做索引, e.g. categorical_feature=0,1,2 意味着 column_0, column_1 和 column_2 是分类特征
+    为列名添加前缀 name:, e.g. categorical_feature=name:c1,c2,c3 意味着 c1, c2 和 c3 是分类特征
+    Note: 只支持分类与 int type. 索引从 0 开始. 同时它不包括标签栏
+    Note: 负值的值将被视为 missing values
+
+无序特征：one-hot encoding，比如城市
+有序特征：label encoding，比如版本号
+xgb的类别数据处理，先将类别数据(不管是有序还是无序，都先转变成0,1,2,3...)，然后
+	再将无序类别转成onehot试试效果，哪种效果好用哪种
+lgb，类别特征使用categorical_feature指定，算法内部会使用many_to_many的方式来分割
+cgb，也是通过categorical_feature来指定类别特征
+
+
+基于树的方法是不需要进行特征的归一化，
+	例如随机森林，bagging 和 boosting等。
+	对于决策树来说，one-hot的本质是增加树的深度，
+	决策树是没有特征大小的概念的，只有特征处于他分布的哪一部分的概念。
+	
+lgb回归问题设置为stratified=False
+你在分词之后转成 w2v 之前先对数据做一道预处理，如果是出现 out of vocabulary 你就直接生成一个同样尺寸的随机词向量。
+如果在训练 w2v 的语料已经经过预处理，其中包括一个特殊的 UNK 单词，那你直接用 UNK 的向量来表示当前 OOV 的词也可以。
+
+https://blog.csdn.net/qq_34706955/article/details/80806970
+第一种:将一个库中已经存在的metrics函数进行包装，
+	使用定制参数，比如对fbeta_score函数中的beta参数进行设置
+	from sklearn.metrics import fbeta_score, make_scorer
+	ftwo_scorer = make_scorer(fbeta_score, beta=2)
+	from sklearn.grid_search import GridSearchCV
+	from sklearn.svm import LinearSVC
+	grid = GridSearchCV(LinearSVC(), param_grid={'C': [1, 10]}, scoring=ftwo_scorer)
+第二个典型用例是，通过make_scorer构建一个完整的定制scorer函数，
+	该函数可以带有多个参数
+实现你自己的scoring对象
+	你可以生成更灵活的模型scorer，通过从头构建自己的scoring对象来完成，
+	不需要使用make_scorer工厂函数。对于一个自己实现的scorer来说，
+	它需要遵循两个原则
+		必须可以用(estimator, X, y)进行调用
+		必须返回一个float的值
+		def official_loss(estimator, X, y):
+			'''官方定义的loss函数'''
+			# 注意重置index，不然会出现意想不到的问题
+			y_ = y.reset_index(drop=True)
+			y_p = estimator.predict(X)
+			adds = (y_p + y_).abs()
+			subs = (y_p - y_).abs()
+			divs = subs / adds
+			N = divs.shape[0] * divs.shape[1]
+			return divs.sum().sum() / N
+			
+如果x_test不fit,那x_test只能转化x_train中的键，
+它不能转化自己有但是x_train中没有的键。当然如果二者键名完全相同，x_test可以直接transform，二者结果无区别。
+
+feature_batch = tf.constant([2,3,1,0])
+tf.nn.embedding_lookup(embedding,feature_batch)
+tf.nn.embedding_lookup_sparse
+tf.gather_nd
+
+tf.TextLineReader()
+tf.TFRecordReader():读取tfrecord格式数据
+tf.WholeFileReader():读取图片
+
+2分类的交叉熵的loss有2种方式，
+	1，原始GAN代码中的方式，直接用sigmoid_cross_entropy_with_logitslabel给1。
+	2，强化学习中GAIL的用法,真的越大越好，假的越小越好？
+	
+使用LSTM搭建网络时，本质上输入都是三维的(batch,timestamp,dim),
+	当使用TensorFlow时，可以传入2D，不足补0(当前batch固定长度)，然后通过embedding_lookup转成3D
+	然后在调用dynamic_rnn指定sequence_length时指定每个样本的长度，提高效率
+	直接传入3D的数据，
+	当使用keras时，可以传入2D，只是在搭建网络时，通过embedding层变成3D，nlp_04.py
+	或者传入3D的数据(lstm_music.py)，也可以通过Masking层，掩掉比如为0的数据，
+	
+在seq2seq中的N vs N中，其实可以不用sequence_loss来计算，最后output=(batch,time_step,size)
+	可以reshape(-1,size)然后乘以(size,1)的矩阵得到(batch*time_step,1)，
+	由于target=(batch,time_step,1),也可以reshape成(batch*time_step,1)的矩阵，然后做square运算
+注意https://blog.csdn.net/mylove0414/article/details/56969181中生成训练集的方式，其实是正确的
+
+在调用dynamic_rnn时，如果不传入initial_state参数，则必须指定dtype参数
+
+单因素输入特征到LSTM，数据是按时间排序的。比如用前1天的数据预测后一天的值，则构造训练集时，时间
+	错开一位
+多因素输入特征时，参考上面的链接构造数据集。类似古诗生成案例中的数据集，每输入一个词对应一个输出词。
+	在计算loss时，可以不用sequence_loss来计算。
+	
+LSTM的输出，可以reshape成(-1,rnn_size)，也可以取最后一层的输出
+	
+load tensorflow模型:
+	saver = tf.train.Saver(tf.global_variables())#如果括号内加了tf.global_variables()这个参数，模型好像读取不到最新的参数
+	ckpt = tf.train.get_checkpoint_state(save_dir)
+	if ckpt and ckpt.model_checkpoint_path:
+		model_file = tf.train.latest_checkpoint(save_dir)
+		saver.restore(sess,model_file)
+	else:
+		sess.run(tf.global_variables_initializer())
+		
+	def load(self, checkpoint_dir):
+        import re
+        print(" [*] Reading checkpoints...")
+        checkpoint_dir = os.path.join(checkpoint_dir, self.model_dir, self.model_name)
+
+        ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
+        if ckpt and ckpt.model_checkpoint_path:
+            ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
+            self.saver.restore(self.sess, os.path.join(checkpoint_dir, ckpt_name))
+            counter = int(next(re.finditer("(\d+)(?!.*\d)", ckpt_name)).group(0))
+            print(" [*] Success to read {}".format(ckpt_name))
+            return True, counter
+        else:
+            print(" [*] Failed to find a checkpoint")
+            return False, 0
+			
+tf中ckpt是模型训练时保存的格式，如果要用serving部署，必须导出成savemode格式，tf中的estimator
+	默认导出的就是savemode格式
+	
+tf中Saver类的save方法，传入的是路劲中最后面那个是模型的名字，比如.meta文件的前缀
+	而restore方法，传入的是.meta文件所在的路劲
+	
+满二叉树:只要你有孩子，就必然有2个孩子
+完全二叉树:最后一层的叶子节点靠左
+完美二叉树:
+
+tf.nn.nce_loss和tf.nn.sampled_softmax_loss2个方法都是用来计算softmax损失的。
+softmax优化有2种思路，一种是保持softmax层不变，修改架构，如hirachical softmax。
+另一种是通过采样，优化损失函数，来接近softmax。第二种其实有2类实现方式
+	第一类:NCE和负采样。其实二者很类似。回想skipgram中的负采样，是判断input和label的匹配程度。
+		而NCE是把真实的X当成正例，从均匀分布中采样出的X当成负例，tf.nn.nce_loss
+		tf.nn.nce_loss,将问题转换成了多个二分类来计算，可以是多标签的label，内部源码采用
+		sigmoid_cross_entropy_with_logits函数实现
+	第二类:sampled softmax，通过采样来近似softmax.  tf.nn.sampled_softmax_loss
+	sampled_softmax_loss 只支持单标签分类，nce_loss支持多标签分类
+	sampled_softmax_loss底层采用的softmax_cross_entropy_with_logits_v2
+	nce_loss底层采用的sigmoid_cross_entropy_with_logits,因此，nce_loss可以支持多标签
+	
+early_stop方式有多种，比如最原始的是，在验证集上看看某个指标，或者使用更新前后参数的kl散度来
+	提前终止训练
+
+
+attention:
+	LSTM
+	多头注意力:attention_tf.py,keras中的实现
+	SAGAN中的实现
+	din中的attention
+	
+生成embedding的方式:
+1.svd(scipy.sparse.linalg.svds)
+2.自定义15个维度，或者说可以是数据原本的属性再加上提取的特征
+3.AE，自编码器提取
+4.通过学习的方法,RNN中kookup方式，word2vc学习的方式,参考2019腾讯广告算法大赛思路
+5.infomax论文的思路
+6.双塔模型中的2个embedding
+7.YouTube-dnn中的思路
+其实后面2种思路都可以看成排序任务中的副产品
+
+
+GridSearchCV中refit=True之后是不用再训练模型的，直接保存后就可以直接用了。
+LogisticRegressionCV同理
+
+lgb 
+
+sequential 模型
+通过add来添加，或者[]，在第一层指定input_shape,
+	或者通过model.build(input_shape)(GitHub上03-Play-with-MNIST)
+	还可以定义Input,通过Model()来定义模型
+1. Sequentail(add,[])
+2. Model 函数式编程。
+3. 继承Model类(在init方法里定义层，在call方法里实现前向传播)
+4. 继承Layer类
+5. 参考GAN中keras的实现方式，定义类
+
+
+gensim 中的Word2Vec的输入是一个二维list([['a','b'],['a','b',c']])
+sklearn 中TfidfVectorizer的输入是一个list(['a b c d','d f h'])
+QMF：Quara出的单机多线程的加权ALS矩阵分解和BPR矩阵分解
+lightfm：单机多线程的SVD矩阵分解、SVD++矩阵分解、BPR矩阵分解
+spark：基于ALS的矩阵分解
+LibFM ： FM的单机多线程版本
+SVD-Feature：基于特征的矩阵分解单机多线程版本
+xlearn：FM和FFM的单机多线程版本
+libffm：FFM的单机多线程版本
+
+word2vec源码分析
+word2vec中正例的采样代码，也即召回中对热门item成为正例的打压代码
+word2vec.py中的1535行开始在计算每个词(根据min_count过滤后的所有词)采样概率。
+	同时会为每个词生成一个sample_int数。在fasttext.py中的151行可以看出是怎么采样的。
+	由于之前每个词都有一个sample_int,如果概率为1，那么该次的sample_int = 2**32,如果某个词的
+	概率不为1，则sample_int肯定小于2**32。在fasttext.py中，根据sample_int是否大于rand()*2**32
+	来过滤词。在doc2vec.py的246行也体现了这个思路
+负采样的思路:
+	在Wordvec.py文件中的1611行计算每个词的频次的0.75次方
+	265行是真正采样的代码，
+	
+负采样修改了原来的⽬标函数。给定中⼼词 [公式] 的⼀个背景窗口，
+	我们把背景词 [公式] 出现在该背景窗 口看作⼀个事件
+负采样实际上是采样负例来帮助训练的手段，其目的与层次softmax一样，
+	是用来提升模型的训练速度。我们知道，模型对正例的预测概率是越大越好，
+	模型对负例的预测概率是越小越好
+	
+
+生成batch有以下几种思路
+1. 根据batch_size大小算好每个epoch循环多少次，X[batch_size*i:(i+1)*batch_size)，NFM.py
+2. 参考wgan_gp_celeba.py的思路，用生成器函数的方式
+3. 参考BPR.py的思路，for(0,len(X),batch_size)
+4. random方式，不太可取。
+
+tensorflow的sparsetensor和densetensor互转
+1. tf.sparse_to_dense:虽然可以按sparse的3个维度传入数据，变成densetensor，但这种方式
+ TensorFlow废弃了，不建议使用，用tf.SparseTensor生成稀疏的，然后用tf.sparse.to_dense转换
+2. 也可以用tf.sparse_tensor_to_dense来转换
+不过todens的时候，index一定要是有序的
+
+按用户统计每个操作类型的次数
+1. 将type onehot编码，groupby sum
+2. 先按用户groupby，g['typ'].value_counts().unstack().reset_index()
+
+docker run -p 8500:8500 --mount type=bind,source=/data2/project/transformer/impl2/saved_model,target=/models/transformer_model -t --entrypoint=tensorflow_model_server tensorflow/serving --port=8500 --enable_batching=true --model_name=transformer_model  --model_base_path=/models &
+docker run -p 8501:8501 -p 8500:8500 --mount type=bind,
+	source=/data1/soft/serving/tensorflow_serving/servables/tensorflow/testdata/saved_model_half_plus_two_cpu,
+	target=/models/half_plus_two_cpu -e MODEL_NAME=half_plus_two_cpu -t tensorflow/serving
+docker run --runtime=nvidia  -p 8501:8501 -p 8500:8500 --mount type=bind,
+	source=/data1/soft/serving/tensorflow_serving/servables/tensorflow/testdata/saved_model_half_plus_two_gpu,
+	target=/models/half_plus_two_gpu -e MODEL_NAME=half_plus_two_gpu -t tensorflow/serving:latest-gpu
+nvidia-docker run  -p 8501:8501 -p 8500:8500 --mount type=bind,
+	source=/data1/soft/serving/tensorflow_serving/servables/tensorflow/testdata/saved_model_half_plus_two_gpu,
+	target=/models/half_plus_two_gpu -e MODEL_NAME=half_plus_two_gpu -t tensorflow/serving:latest-gpu
+docker  run --runtime=nvidia --rm -p  8500:8500 -p 8501:8501 
+	-v /data2/project/transformer/impl2/model_out:/models/transformer_model 
+	-e MODEL_NAME=transformer_model -t tensorflow/serving:latest-gpu
+	
+docker run -p 8501:8501 -v /data2/project/transformer/impl2/saved_model:/models/model -e MODEL_NAME=model -t tensorflow/serving
+
+import tensorflow.compat.v1 as tf
+docker run -p 8500:8500  -p 8501:8501 -v /data2/project/transformer/impl2/saved_model:/models/transformer_model -e MODEL_NAME=transformer_model tensorflow/serving &
+saved_model目录下要有个整数形式的文件夹，相当于版本号，但是命令行中不能指定到版本号
+MODEL_NAME只能是大写
+docker run --rm -t -v /data1/soft/serving/tensorflow_serving/servables/tensorflow/testdata/saved_model_half_plus_two_cpu:/models/ha
+lf_plus_two_cpu -p 8500:8500 -p 8501:8501 -e MODEL_NAME=half_plus_two_cpu tensorflow/serving &
+
+docker run --runtime=nvidia --rm -t -v /data1/soft/serving/tensorflow_serving/servables/tensorflow/testdata/saved_model_half_plus_t
+wo_gpu:/models/half_plus_two_gpu -p 8500:8500 -p 8501:8501 -e MODEL_NAME=half_plus_two_gpu tensorflow/serving:latest-gpu &
+8500:grpc
+8501:http
+
+pip install tensorflow-serving-api
+saved_model_cli show --dir saved_model/1614764811/ --all
