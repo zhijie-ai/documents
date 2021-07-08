@@ -1,0 +1,64 @@
+iterrows(): 将DataFrame迭代为(index, Series)对。
+itertuples(): 将DataFrame迭代为元祖。比iterrows效率高
+iteritems():将DataFrame迭代为(列名, Series)对 df.item()
+df = pd.DataFrame({'name':list('ABCD'),'age':['20K','30K','10K','50K']})
+df.replace({'name':{'A':'aaa'}})
+
+display(type(pd.datetime(2011,1,1,0,0,3)))
+display(type(pd.to_datetime(['2011-1-1'])))
+display(type(pd.to_datetime('2011-1-1')))
+display(type(pd.Timestamp('2015-05-01')))
+
+datetime.datetime
+pandas.core.indexes.datetimes.DatetimeIndex
+pandas._libs.tslib.Timestamp
+pandas._libs.tslib.Timestamp
+如果直接取day的话出错,注意有pd.Series
+pd.to_datetime(pd.Series(['2019-12-08','2019-12-09'])).dt.day
+
+pd.to_datetime(time.strftime('%Y-%m-%d',time.gmtime(1564934400))).dayofweek
+
+Binarizer df,二维数据，数值型
+
+ LabelEncoder可以处理数值型和类别型数据,Series
+LabelBinarizer 将对应的数据转换为二进制型，有点类似于onehot编码，
+	这里有几点不同，LabelBinarizer可以处理数值型和类别型数据，
+	输入必须为1D数组，可以自己设置正类和父类的表示方式
+OneHotEncoder OneHotEncoder只能对数值型数据进行处理，
+	还是上面的数据,只接受2D数组
+
+time.strftime("%a %b %d %H:%M:%S %Y",a)a为时间元组
+time.strptime(b,'%a %b %d %H:%M:%S %Y')b为时间字符串
+
+d.strftime('%Y/%m/%d')
+datetime.strptime('2017/02/04 20:49', '%Y/%m/%d %H:%M')
+
+A.apply(pd.Series,index=range(20)) A为pd.Series
+
+stack:行转列，将一行变成内层的索引
+unstack:列转行
+
+pd.Series({'lib':randint(-1,1), 'qty1':randint(-1,1), 'qty2':randint(-1,1)})
+reset_index(level=0)#默认drop=False
+df.set_index('age')#默认drop=True
+
+s.where(con,other) 如果con为真，不做任何操作，False，则替换为other
+mask 函数和 where 作用刚好相反。s.mask(s > 1, 10)
+np.where(condition, x, y)满足条件(condition)，输出x，不满足输出y。
+pd.read_csv,如果指定iterator=True,这通过while循环来读取，如果指定chunksize
+	则通过for i in ...来读取，实际上都是通过循环来读取
+df.to_dict(orient='record')
+
+可通过load_svmlight_file加载libsvm格式文件变成稀疏矩阵方式
+或者通过DictVectorizer方式
+
+gb中size跟count的区别： size计数时包含NaN值，而count不包含NaN值
+https://www.cnblogs.com/keye/p/11153427.html
+
+x1=gb['消费笔数'].agg({'用户放款前消费笔数' : 'sum'}) 
+里面没有用户放款前消费笔数这个字段也能使用agg，但是，如果直接用gb.agg却报错
+
+np.set_printoption(suppress=True,precision=10,threshold=200,linewidth=150)
+pd.set_option('display.float_format',lambda x:'%.2f'%x)
+spark.range(3).withColumn('date',current_date()).show()
+group['time_stamp'].agg([('F_time','min'),('L_time','max')[).reset_index()

@@ -1,0 +1,248 @@
+dir(模块名)
+查看完整的内置函数清单
+	dir(__builtins__)
+查看某个函数
+	help(f)
+__all__
+__file__
+定义模块的时候定义__all__属性，该属性指明了哪些api对外公开
+单下划线开头的表示不能用'from module import *'导入 ，只有类对象和子类对象自己能访问到这些变量
+双下划线开头的表示私有的变量或方法。
+	私有变量，只有在本类中才能访问，不能被import，也不能被子类访问，除非提供别的接口访问
+双下划线开头且结束表示是特列方法,像__init__之类的
+1. 当使用from package import item时，item可以是package的子模块或子包，
+	或是其他的定义在包中的名字（比如一个函数、类或变量）
+2. 当使用import item.subitem.subsubitem语法时，最后一个item
+	之前的item必须是包，最后一个item可以是一个模块或包，但不能是类、
+	函数和变量
+__init__
+__del__
+__new__
+__str__
+
+@classmethod
+def test1(cls):
+	pass
+
+@staticmethod
+def test2():
+	pass
+
+def test3(this):
+	pass
+_xxx 不能用'from moduleimport *'导入
+__xxx__ 系统定义名字
+__xxx 类中的私有变量名 
+	
+格式化字符串在135页
+
+import urllib.request
+import webbrowser
+
+一些深受欢迎的python包
+PIL:Python图像处理库
+Tkinter:python GUI
+wxpython:python GUI
+Django:交互式网站
+Bottle:交互式网站
+Pygame:2D动画
+SciPy:科学计算
+Twisted:网络编程
+PyPI:Python包索引
+optparse:命令行参数解析包
+
+ __name__，__name__作为模块的内置属性，简单点说呢，就是.py文件的调用方式
+ __main__，刚才我也提过，.py文件有两种使用方式：作为模块被调用和直接使用。
+	如果它等于"__main__"就表示是直接执行。
+	
+itertools
+
+def print_hellp(*p)
+def print_hellp(**p) 及方法的逆过程
+
+import sys,pprint
+pprint.pprint(sys.path)
+zip()是Python的一个内建函数，它接受一系列可迭代的对象作为参数，
+	将对象中对应的元素打包成一个个tuple（元组），然后返回由这些tuples组成的list（列表）
+map(fn,seq[,seq])
+	map()函数是将func作用于seq中的每一个元素，并用一个列表给出返回值。如果func为None，作用同zip()。
+reduce()
+[ n for n in dir(copy) if not n.startswith('_')]
+
+使用新类有2种方式，继承object,或者__metaclass__=type
+
+class A 这种是旧的写法class A(object)新的写法
+class B(A)
+	def __init__(self):
+		A.__init__(self)这是旧的写法
+class B(A)
+	def __init__(self):
+		super(B,self).__init__()
+		
+a,b为2个矩阵，a*b和np.dot(a,b)是不一样的，a*b为a，b中对应位置元素相乘，np.dot(a,b)为矩阵操作
+np.ones(5)和np.ones(5,1)生成的数据意义是不一样的，前者是一个向量，后者是一个5行已列的数组
+
+python起名注意:文件的名字不能用test开头，大小写敏感。以TEST开头可以
+文件中方法或类的名字不能用test开头(_test开头也不行)，大小写敏感，可以包含大写，可以以大写开头
+	不能含有单独存在的单词，get_test_data_set不行
+	
+numpy * dot运算
+如果2个都是ndarray的话，*运算要符合broadcasting机制。即元素与元素运算，得到的还是ndarray。
+其中一个是matrix的话，*运算会进行矩阵的乘法运算。得到的是矩阵
+2个数，有ndarray没matrix，结果就是ndarray，有ndarray有matrix，结果就是matrix
+*运算，如果是2个ndarray运算的话，会进行hadamard乘积，
+一个ndarray和matrix会进行矩阵的乘积
+
+2*list表示复制2次，2*ndarray，表示用2乘以ndarray中的数据
+
+python的三种读文件的方法read readLine readLines，读的文件内容都是包含\n的
+
+import subprocess
+subprocess.call('cls',shell=True)
+
+import os
+os.system('cls')
+
+os模块负责程序与操作系统的交互，提供了访问操作系统底层的接口。sys模块负责程序与python解释器的交互
+	提供了一系列的变量与函数，用于控制python的运行时环境。
+	
+rng = np.random.RandomState(22)
+rng.randint()
+
+np.random.seed(0)
+s = np.random.normal(4,0.1,1000)
+
+moduleX 被 import 进来，它的名字就是 package.subpackage1.moduleX。
+	如果 import 了 moduleA，它的名字是 package.moduleA。
+	如果直接运行 moduleX 或 moduleA，那么名字就都是__main__ 了
+	
+1. 设置reuse=False时，函数get_variable（）表示创建变量
+2. 设置reuse=True时，函数get_variable（）表示获取变量
+tf.Session()创建一个会话，当上下文管理器退出时会话关闭和资源释放自动完成。
+tf.Session().as_default()创建一个默认会话，当上下文管理器退出时会话没有关闭，
+	还可以通过调用会话进行run()和eval()操作
+	https://blog.csdn.net/zbl1243/article/details/88068015
+pandas groupby 中的nunique有计数的功能
+
+由于有GIL的存在，python多线程只有在IO密集型才会发挥作用，建议用多进程代替多线程
+https://www.jianshu.com/p/573aaa001b35
+因此，这也就是为什么两个线程一起执行反而更加慢的原因，
+	GIL,因为同一时刻，只有一个线程在运行，其它线程只能等待，
+	即使是多核CPU，也没办法让多个线程「并行」地同时执行代码，
+	只能是交替执行，因为多线程涉及到上下文切换、锁机制处理（获取锁，释放锁等），
+	所以，多线程执行不快反慢。
+java的多线程是不需要获得锁才运行的(还记得当初写多线程时，没有互斥锁修改数据混乱？)，只有
+	在修改共享数据时才需要获取互斥锁，而python代码，在一个进程中只有一个GIL，如果想让多线程
+	获得CPU的执行，就必须获得GIL锁，所以python中的多线程并不是真正意义上的多线程。
+	https://blog.csdn.net/simuLeo/article/details/80066870
+	计算密集型函数，因为GIL的原因，多线程是无法提升效率的
+	
+map 函数的并行
+from multiprocessing import Pool
+from multiprocessing.dummy import Pool as ThreadPool
+还有concurrent包下的map函数，也可以支持并行
+原生的map函数，如果是多个list，也支持并行
+
+model.metrics_names 可查看有哪些指标，包括compile时传入的，也包括
+	model.metrics_names.append添加的
+loss = train_on_batch(),返回的不仅仅是loss，还有compile编译时传入的指标，可通过
+	model.metrics_names查看。fit方法在训练时，返回的明细中也是根据指标来显示的
+	注意loss = train_on_batch(),loss不是模型的预测输出，模型的预测输出在train_on_batch
+	方法中，返回的是模型的指标
+	
+https://blog.csdn.net/sigmarising/article/details/84799769
+对比结果我们会发现，sys.path 的初始化顺序如下：
+    1.将 PYTHONPATH 中的内容放入
+    2.如果使用 PyCharm 运行，PyCharm 会把工程设置的 Content Root 插入到 sys.path 首部
+    3.将运行脚本所在的目录，插入到 sys.path 首部
+	如果使用pycharm运行，先在首部插入content root，再在首部插入脚本所在的目录
+	如果使用shell运行，在首部插入文件所在的目录
+所以，from mypkg.setting import something 语句在：
+    命令行运行时：无法在 pypkgtest/mypkg 及其他目录下定位到 mypkg 模块/包 ，运行失败
+    PyCharm运行时：成功在 Content Root（pypkgtest/）目录下定位到了 mypkg 模块/包 ，运行成功
+	
+1叫做直接运行
+2把模块当作脚本来启动(注意：但是__name__的值为'main' )
+直接启动是把xx.py文件，所在的目录放到了sys.path属性中。
+模块启动是把你输入命令的目录（也就是当前路径），放到了sys.path属性中
+
+# 设置pyspark运行时的python版本
+export PYSPARK_PYTHON=/usr/bin/python3
+
+#指定启动pyspark后的交互式界面，使用ipython3作为默认启动交互界面
+export PYSPARK_PYTHON=$ANACONDA_HOME/bin/ipython3
+export PYSPARK_DRIVER_PYTHON
+
+export PYTHONIOENCODING=utf8
+
+time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())
+time.strptime("24 Jan 2019", "%d %b %Y")
+datetime.now().strftime('%Y-%m-%d')
+datetime.datetime.strptime('2019-11-12','%Y-%m-%d')
+
+all(arr):所有的不为空才返回True
+any(arr):判断对象是否为空，如果有一个不为空，这返回True
+python setup.py build
+python setup.py instal
+
+可迭代对象包含迭代器
+如果一个对象拥有__iter__方法，其是可迭代对象，如果一个对象拥有next方法，其是迭代器
+定义可迭代对象，必须实现__iter__方法，定义迭代器，比如实现__iter__和next方法
+生成器是一种特殊的迭代器，生成器自动实现了迭代器协议(即__iter__和next方法)，yield
+__getitem__可以把对象当成数组一样来访问
+生成器函数
+生成器表达式
+
+conda create -n env_name
+conda remove -n env_name --all
+conda env export > py.yaml
+conda env create -f py.yaml
+conda create -n new_env --clone env_name
+conda remove -n old_env --all
+pip freeze >27.txt
+pip list --format=freeze > r.txt
+pip install -r 27.txt
+
+conda config --add channels https://mirrors.ustc.edu.cn/ananconda/pkgs/free
+conda config --remove-key channels
+
+
+misc
+plt
+imageio
+Image
+cv2
+scikit-image基于scipy的一款图像处理包
+PIL
+Pillow
+
+
+scipy.special.comb(组合),factoral(阶乘),perm(排列 A)
+
+
+df.isnull().any()
+df.isnull().sum()>0
+df.columns[df.isnull().sum()>0]
+
+ser = df.isnull().any()
+df.isnull().any()[ser]
+
+globals().keys()
+sys.getsizeof()
+
+大数据情况下别使用默认的float类型，最好使用np.float32
+export PYSPARK_DRIVER_PYTHON
+
+for column in list(df.columns[df.isnull().sum()>0]):
+	mean_val = df[column].mean()
+	df[column].fillna(mean_val,inplace=True)
+	
+存入到redis如果是通过json.dumps的方式，则变成了json格式，key为str，
+	而df中的value为int。所以匹配不上
+	如果通过str(dict)存储，则通过eval()来变成dict，不能通过decode来，
+	如果用decode，只是变成了一个str，用dict转成会报错
+
+在site-packages路劲下新建*.pth文件，如果路劲不存在则添加到sys.path中
+PYTHONPATH
+dict([(1,2),(3,4)]也会是一个dict
+islice()迭代器
