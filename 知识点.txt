@@ -62,3 +62,5 @@ np.set_printoption(suppress=True,precision=10,threshold=200,linewidth=150)
 pd.set_option('display.float_format',lambda x:'%.2f'%x)
 spark.range(3).withColumn('date',current_date()).show()
 group['time_stamp'].agg([('F_time','min'),('L_time','max')[).reset_index()
+
+np.unique(user_indices, return_inverse=True, return_counts=True)
