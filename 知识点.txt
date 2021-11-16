@@ -64,3 +64,8 @@ spark.range(3).withColumn('date',current_date()).show()
 group['time_stamp'].agg([('F_time','min'),('L_time','max')[).reset_index()
 
 np.unique(user_indices, return_inverse=True, return_counts=True)
+
+select is_nan(1/0);--flase
+select is_nan(0/0);--true
+select is_inf(0/0);--flase
+select is_inf(1/0);--true
