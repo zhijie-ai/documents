@@ -45,6 +45,7 @@ df.set_index('age')#默认drop=True
 s.where(con,other) 如果con为真，不做任何操作，False，则替换为other,series
 mask 函数和 where 作用刚好相反。s.mask(s > 1, 10)
 np.where(condition, x, y)满足条件(condition)，输出x，不满足输出y。
+np.where(condition) 输出index
 pd.read_csv,如果指定iterator=True,这通过while循环来读取，如果指定chunksize
 	则通过for i in ...来读取，实际上都是通过循环来读取
 df.to_dict(orient='record')
