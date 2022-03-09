@@ -1,5 +1,5 @@
 iterrows(): 将DataFrame迭代为(index, Series)对。
-itertuples(): 将DataFrame迭代为元祖。比iterrows效率高
+itertuples(): 将DataFrame迭代为元祖。比iterrows效率高， 返回一个Pandas对象
 iteritems():将DataFrame迭代为(列名, Series)对 df.item()
 df = pd.DataFrame({'name':list('ABCD'),'age':['20K','30K','10K','50K']})
 df.replace({'name':{'A':'aaa'}})
