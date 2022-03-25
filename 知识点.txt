@@ -70,3 +70,12 @@ select is_nan(1/0);--flase
 select is_nan(0/0);--true
 select is_inf(0/0);--flase
 select is_inf(1/0);--true
+
+# df = base.groupby('user_id', as_index=False).price.agg(['count','sum'])
+df = base.groupby('user_id')['price'].agg([('cnt','count'),('total_price','sum')])# , as_index=False
+df = df.reset_index()
+# df = base.groupby('user_id')['price'].agg({'cnt':'count','total_price':'sum'})# 出错，冒号前面的名字为实际存在的列名
+# df = base[['user_id','price','is_new']].groupby('user_id').agg({'price':'sum','is_new':'count'})
+# df = base.groupby('user_id')['price'].agg(['sum','size'])
+# df = base.groupby('user_id', as_index=False)[['price','is_new']].agg({'price':'sum','is_new':'count'})
+display(df.head(), df.shape)
