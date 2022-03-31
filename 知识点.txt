@@ -79,3 +79,6 @@ df = df.reset_index()
 # df = base.groupby('user_id')['price'].agg(['sum','size'])
 # df = base.groupby('user_id', as_index=False)[['price','is_new']].agg({'price':'sum','is_new':'count'})
 display(df.head(), df.shape)
+
+多层column排序
+model_df.sort_values([('TOP 10%','购买率提升(%)')])
