@@ -246,3 +246,7 @@ for column in list(df.columns[df.isnull().sum()>0]):
 PYTHONPATH
 dict([(1,2),(3,4)]也会是一个dict
 islice()迭代器
+
+# matplotlib.use('Agg') # 不显示图片
+# plt.switch_backend('agg')
+matplotlib.use('TkAgg')
