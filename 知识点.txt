@@ -1,5 +1,5 @@
 iterrows(): 将DataFrame迭代为(index, Series)对。
-itertuples(): 将DataFrame迭代为元祖。比iterrows效率高
+itertuples(): 将DataFrame迭代为元祖。比iterrows效率高， 返回一个Pandas对象
 iteritems():将DataFrame迭代为(列名, Series)对 df.item()
 df = pd.DataFrame({'name':list('ABCD'),'age':['20K','30K','10K','50K']})
 df.replace({'name':{'A':'aaa'}})
@@ -45,6 +45,7 @@ df.set_index('age')#默认drop=True
 s.where(con,other) 如果con为真，不做任何操作，False，则替换为other,series
 mask 函数和 where 作用刚好相反。s.mask(s > 1, 10)
 np.where(condition, x, y)满足条件(condition)，输出x，不满足输出y。
+np.where(condition) 输出index
 pd.read_csv,如果指定iterator=True,这通过while循环来读取，如果指定chunksize
 	则通过for i in ...来读取，实际上都是通过循环来读取
 df.to_dict(orient='record')
@@ -64,3 +65,20 @@ spark.range(3).withColumn('date',current_date()).show()
 group['time_stamp'].agg([('F_time','min'),('L_time','max')[).reset_index()
 
 np.unique(user_indices, return_inverse=True, return_counts=True)
+
+select is_nan(1/0);--flase
+select is_nan(0/0);--true
+select is_inf(0/0);--flase
+select is_inf(1/0);--true
+
+# df = base.groupby('user_id', as_index=False).price.agg(['count','sum'])
+df = base.groupby('user_id')['price'].agg([('cnt','count'),('total_price','sum')])# , as_index=False
+df = df.reset_index()
+# df = base.groupby('user_id')['price'].agg({'cnt':'count','total_price':'sum'})# 出错，冒号前面的名字为实际存在的列名
+# df = base[['user_id','price','is_new']].groupby('user_id').agg({'price':'sum','is_new':'count'})
+# df = base.groupby('user_id')['price'].agg(['sum','size'])
+# df = base.groupby('user_id', as_index=False)[['price','is_new']].agg({'price':'sum','is_new':'count'})
+display(df.head(), df.shape)
+
+多层column排序
+model_df.sort_values([('TOP 10%','购买率提升(%)')])
