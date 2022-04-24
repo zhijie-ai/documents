@@ -1013,7 +1013,7 @@ word2vec.py中的1535行开始在计算每个词(根据min_count过滤后的所�
 	由于之前每个词都有一个sample_int,如果概率为1，那么该词的sample_int = 2**32,如果某个词的
 	概率不为1，则sample_int肯定小于2**32。在fasttext.py中，根据sample_int是否大于rand()*2**32
 	来过滤词。在doc2vec.py的246行也体现了这个思路
-负采样的思路:
+负采样的思路: make_cum_table
 	在Wordvec.py文件中的1611行计算每个词的频次的0.75次方
 	265行是真正采样的代码，
 	
