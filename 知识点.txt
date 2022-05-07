@@ -82,3 +82,5 @@ display(df.head(), df.shape)
 
 多层column排序
 model_df.sort_values([('TOP 10%','购买率提升(%)')])
+
+pd中groupby后的shift会展开,和原始shape一样
